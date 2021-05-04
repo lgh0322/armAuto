@@ -19,5 +19,8 @@ class MainActivity : AppCompatActivity() {
         x3=findViewById(R.id.x3)
         x4=findViewById(R.id.x4)
         x1.filters= arrayOf(InputFilterMinMax("0","255"))
+        x2.filters= arrayOf(InputFilterMinMax("0","255"))
+        x3.filters= arrayOf(InputFilterMinMax("0","255"))
+        x4.filters= arrayOf(InputFilterMinMax("0","255"))
     }
 }
