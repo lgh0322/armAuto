@@ -1,4 +1,4 @@
-package com.vaca.modifiId;
+package com.vaca.modifiId.utils;
 
 
 import android.text.InputFilter;
@@ -10,7 +10,7 @@ import android.text.Spanned;
  * 邮箱： 15378412400@163.com
  */
 
-public class InputFilterMinMax implements InputFilter{
+public class InputFilterMinMax implements InputFilter {
     private int min, max;
 
     public InputFilterMinMax(int min, int max) {
@@ -26,15 +26,16 @@ public class InputFilterMinMax implements InputFilter{
     @Override
     public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
         try {
-            String s=dest.toString() + source.toString();
-            if(s.length()>3){
+            String s = dest.toString() + source.toString();
+            if (s.length() > 3) {
                 return "";
             }
             int input = Integer.parseInt(s);
             if (isInRange(min, max, input))
                 return null;
 
-        } catch (Exception nfe) { }
+        } catch (Exception nfe) {
+        }
         return "";
     }
 

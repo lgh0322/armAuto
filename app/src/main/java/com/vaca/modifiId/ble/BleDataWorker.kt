@@ -1,4 +1,4 @@
-package com.vaca.modifiId
+package com.vaca.modifiId.ble
 
 
 import android.bluetooth.BluetoothDevice
@@ -27,7 +27,7 @@ class BleDataWorker {
     val sendChannel = Channel<ByteArray>(Channel.CONFLATED)
 
     enum class BleCallBack {
-        START, BODY, END,OTHER
+        START, BODY, END, OTHER
     }
 
     val startPackage = byteArrayOf(0x0e.toByte(), 0x02.toByte(), 0x16.toByte(), 0x00.toByte())
@@ -63,20 +63,20 @@ class BleDataWorker {
 
     }
 
-    fun equalPkg(a: ByteArray, b: ByteArray):Boolean{
-        if(a.size!=b.size){
+    fun equalPkg(a: ByteArray, b: ByteArray): Boolean {
+        if (a.size != b.size) {
             return false
         }
 
-        for(k in a.indices){
-            if(a[k]!=b[k]){
+        for (k in a.indices) {
+            if (a[k] != b[k]) {
                 return false
             }
         }
         return true
     }
 
-    private val sendCallBack=object : DataSentCallback{
+    private val sendCallBack = object : DataSentCallback {
         override fun onDataSent(device: BluetoothDevice, data: Data) {
             dataScope.launch {
                 data.value?.let {
@@ -92,18 +92,18 @@ class BleDataWorker {
             dataScope.launch {
 
                 data.value?.run {
-                    for(k in this){
+                    for (k in this) {
 
                     }
-                   if(equalPkg(this, startPackage)){
-                       fileChannel.send(BleCallBack.START)
-                   }else if(equalPkg(this, bodyPackage)){
-                       fileChannel.send(BleCallBack.BODY)
-                   }else if(equalPkg(this, endPackage)){
-                       fileChannel.send(BleCallBack.END)
-                   }else{
-                       fileChannel.send(BleCallBack.OTHER)
-                   }
+                    if (equalPkg(this, startPackage)) {
+                        fileChannel.send(BleCallBack.START)
+                    } else if (equalPkg(this, bodyPackage)) {
+                        fileChannel.send(BleCallBack.BODY)
+                    } else if (equalPkg(this, endPackage)) {
+                        fileChannel.send(BleCallBack.END)
+                    } else {
+                        fileChannel.send(BleCallBack.OTHER)
+                    }
                 }
             }
 
@@ -135,15 +135,12 @@ class BleDataWorker {
             sendCmdOTA(byteArrayOf(0x16.toByte(), 0x00.toByte()))
             delay(200)
             readBleCallBack()
-            while(fileChannel.receive() != BleCallBack.START) {
+            while (fileChannel.receive() != BleCallBack.START) {
                 readBleCallBack()
                 delay(200)
             }
         }
     }
-
-
-
 
 
     private suspend fun writeId(byteArray: ByteArray) {
@@ -153,19 +150,9 @@ class BleDataWorker {
     }
 
 
-
-
-
-
-
-
-
-
-
-
-    fun OTA_Write_Flash_section_start(check: Int, size: Int, Address: Int) :ByteArray{
+    fun OTA_Write_Flash_section_start(check: Int, size: Int, Address: Int): ByteArray {
         val WriteData = ByteArray(10)
-        WriteData[0] =0x14
+        WriteData[0] = 0x14
         WriteData[1] = 0x13
         WriteData[2] = (Address and 0x000000FF).toByte()
         WriteData[3] = (Address and 0x0000FF00 shr 8).toByte()
@@ -175,8 +162,8 @@ class BleDataWorker {
         WriteData[7] = (size and 0x0000FF00 shr 8).toByte()
         WriteData[8] = (check and 0x000000FF).toByte()
         WriteData[9] = (check and 0x0000FF00 shr 8).toByte()
-        for(k in WriteData){
-            Log.e("掠夺式开发",k.toUByte().toInt().toString())
+        for (k in WriteData) {
+            Log.e("掠夺式开发", k.toUByte().toInt().toString())
         }
         return WriteData
     }
@@ -184,13 +171,13 @@ class BleDataWorker {
     suspend fun updateDevice(byteArray: ByteArray) {
         erase()
 
-        val x=byteArray.copyOfRange(0,5120)
-        var s=0
-        for(k in x){
-            s+=k.toUByte().toInt()
+        val x = byteArray.copyOfRange(0, 5120)
+        var s = 0
+        for (k in x) {
+            s += k.toUByte().toInt()
         }
 
-        sendCmdOTA(OTA_Write_Flash_section_start(s,5120,0))
+        sendCmdOTA(OTA_Write_Flash_section_start(s, 5120, 0))
 
         delay(1000)
 
@@ -215,18 +202,17 @@ class BleDataWorker {
             }
 
 
-          withTimeoutOrNull(1){
-              sendChannel.receive()
-          }
+            withTimeoutOrNull(1) {
+                sendChannel.receive()
+            }
 
             sendCmdOTA(writeData)
 
-            val re=sendChannel.receive()
+            val re = sendChannel.receive()
 
-            if(equalPkg(writeData, re)){
+            if (equalPkg(writeData, re)) {
 
             }
-
 
 
         }
@@ -246,16 +232,16 @@ class BleDataWorker {
         bleDataManager?.setConnectionObserver(connectState)
         bluetoothDevice?.let {
             bleDataManager?.connect(it)
-                ?.useAutoConnect(true)
-                ?.timeout(10000)
-                ?.retry(85, 100)
-                ?.done {
-                    Log.i("BLE", "连接成功了.>>.....>>>>")
-                    dataScope.launch {
-                        connectChannel.send("yes")
+                    ?.useAutoConnect(true)
+                    ?.timeout(10000)
+                    ?.retry(85, 100)
+                    ?.done {
+                        Log.i("BLE", "连接成功了.>>.....>>>>")
+                        dataScope.launch {
+                            connectChannel.send("yes")
+                        }
                     }
-                }
-                ?.enqueue()
+                    ?.enqueue()
 
 
         }

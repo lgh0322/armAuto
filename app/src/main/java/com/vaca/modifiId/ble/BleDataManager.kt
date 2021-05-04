@@ -1,4 +1,4 @@
-package com.vaca.modifiId
+package com.vaca.modifiId.ble
 
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothGatt
@@ -29,20 +29,19 @@ class BleDataManager(context: Context, val read: DataReceivedCallback) : BleMana
     }
 
 
-
     fun sendCmdOTA(bytes: ByteArray?) {
         writeCharacteristic(ota_char, bytes)
-            .split()
-            .done { }
-            .enqueue()
+                .split()
+                .done { }
+                .enqueue()
     }
 
 
     fun sendCmd(bytes: ByteArray?) {
         writeCharacteristic(write_char, bytes)
-            .split()
-            .done { }
-            .enqueue()
+                .split()
+                .done { }
+                .enqueue()
     }
 
 
@@ -70,7 +69,6 @@ class BleDataManager(context: Context, val read: DataReceivedCallback) : BleMana
             }
 
 
-
             val service = gatt.getService(service_uuid)
             if (service != null) {
                 write_char = service.getCharacteristic(write_uuid)
@@ -89,7 +87,6 @@ class BleDataManager(context: Context, val read: DataReceivedCallback) : BleMana
             }
 
 
-
             // Return true if all required services have been found
             return ota_char != null
         }
@@ -106,21 +103,21 @@ class BleDataManager(context: Context, val read: DataReceivedCallback) : BleMana
             // You may enqueue multiple operations. A queue ensures that all operations are
             // performed one after another, but it is not required.
             beginAtomicRequestQueue()
-                .add(requestMtu(23) // Remember, GATT needs 3 bytes extra. This will allow packet size of 244 bytes.
-                    .with { _: BluetoothDevice?, mtu: Int ->
-                        log(
-                            Log.INFO,
-                            "MTU set to $mtu"
-                        )
-                    }
-                    .fail { _: BluetoothDevice?, status: Int ->
-                        log(
-                            Log.WARN,
-                            "Requested MTU not supported: $status"
-                        )
-                    })
-                .done { log(Log.INFO, "Target initialized") }
-                .enqueue()
+                    .add(requestMtu(23) // Remember, GATT needs 3 bytes extra. This will allow packet size of 244 bytes.
+                            .with { _: BluetoothDevice?, mtu: Int ->
+                                log(
+                                        Log.INFO,
+                                        "MTU set to $mtu"
+                                )
+                            }
+                            .fail { _: BluetoothDevice?, status: Int ->
+                                log(
+                                        Log.WARN,
+                                        "Requested MTU not supported: $status"
+                                )
+                            })
+                    .done { log(Log.INFO, "Target initialized") }
+                    .enqueue()
 
 //            readCharacteristic(ota_char).with(read).enqueue()
 
@@ -135,19 +132,19 @@ class BleDataManager(context: Context, val read: DataReceivedCallback) : BleMana
 
     companion object {
         val ota_service_uuid: UUID =
-            UUID.fromString("0000ff00-0000-1000-8000-00805f9b34fb")
+                UUID.fromString("0000ff00-0000-1000-8000-00805f9b34fb")
 
         val ota_uuid: UUID =
-            UUID.fromString("0000ff01-0000-1000-8000-00805f9b34fb")
+                UUID.fromString("0000ff01-0000-1000-8000-00805f9b34fb")
 
         val service_uuid: UUID =
-            UUID.fromString("00000001-0000-1000-8000-00805f9b34fb")
+                UUID.fromString("00000001-0000-1000-8000-00805f9b34fb")
 
         val notify_uuid: UUID =
-            UUID.fromString("00000003-0000-1000-8000-00805f9b34fb")
+                UUID.fromString("00000003-0000-1000-8000-00805f9b34fb")
 
         val write_uuid: UUID =
-            UUID.fromString("00000002-0000-1000-8000-00805f9b34fb")
+                UUID.fromString("00000002-0000-1000-8000-00805f9b34fb")
 
 
     }

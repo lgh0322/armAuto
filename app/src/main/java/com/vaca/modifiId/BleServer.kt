@@ -6,6 +6,8 @@ import android.bluetooth.BluetoothDevice
 import android.bluetooth.le.BluetoothLeScanner
 import android.content.Context
 import android.content.Context.ACTIVITY_SERVICE
+import com.vaca.modifiId.ble.BleDataWorker
+import com.vaca.modifiId.ble.BleScanManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -23,7 +25,7 @@ object BleServer {
     }
 
 
-    fun updateDevice(byteArray: ByteArray){
+    fun updateDevice(byteArray: ByteArray) {
         dataScope.launch {
             BLE_DATA_WORKER.updateDevice(byteArray)
         }
@@ -34,7 +36,7 @@ object BleServer {
         scan.start()
         scan.setCallBack(object : BleScanManager.Scan {
             override fun scanReturn(name: String, bluetoothDevice: BluetoothDevice) {
-                if(!name.contains("LGH")){
+                if (!name.contains("LGH")) {
                     return
                 }
                 if (!nrfConnect) {
@@ -68,7 +70,7 @@ object BleServer {
 
     fun isRunningForeground(context: Context): Boolean {
         val activityManager =
-            context.getSystemService(Context.ACTIVITY_SERVICE) as (ActivityManager);
+                context.getSystemService(Context.ACTIVITY_SERVICE) as (ActivityManager);
         val appProcessInfoList = activityManager.getRunningAppProcesses();
         /**枚举进程*/
         for (appProcessInfo in appProcessInfoList) {

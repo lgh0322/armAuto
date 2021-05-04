@@ -1,4 +1,4 @@
-package com.vaca.modifiId
+package com.vaca.modifiId.ble
 
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
@@ -51,8 +51,8 @@ class BleScanManager {
 
     private var leScanCallback: ScanCallback = object : ScanCallback() {
         override fun onScanResult(
-            callbackType: Int,
-            result: ScanResult,
+                callbackType: Int,
+                result: ScanResult,
         ) {
             super.onScanResult(callbackType, result)
             val device = result.device
@@ -73,14 +73,14 @@ class BleScanManager {
     }
 
     val settings: ScanSettings = ScanSettings.Builder()
-        .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
-        .setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES)
-        .build()
+            .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+            .setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES)
+            .build()
 
     fun initScan(context: Context) {
         context.apply {
             val bluetoothManager =
-                getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+                    getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
             bluetoothAdapter = bluetoothManager.adapter
             leScanner = bluetoothAdapter!!.bluetoothLeScanner
         }
