@@ -39,6 +39,8 @@ class MainActivity : AppCompatActivity(),BleViewAdapter.ItemClickListener {
     var xx2=0;
     var xx3=0
     var xx4=0
+    var xx5=0
+    var xx6=0
 
 
     private val bleList: MutableList<BleBean> = ArrayList()
@@ -182,7 +184,11 @@ class MainActivity : AppCompatActivity(),BleViewAdapter.ItemClickListener {
 
         binding.x1.doAfterTextChanged {
             if(buttonSelect.value!!){
+                try {
+                    xx1=Integer.valueOf(binding.x1.text.toString(),16)
+                }catch (e: java.lang.Exception){
 
+                }
             }else{
                 try {
                     xx1=binding.x1.text.toString().toInt()
@@ -195,7 +201,11 @@ class MainActivity : AppCompatActivity(),BleViewAdapter.ItemClickListener {
 
         binding.x2.doAfterTextChanged {
             if(buttonSelect.value!!){
+                try {
+                    xx2=Integer.valueOf(binding.x2.text.toString(),16)
+                }catch (e: java.lang.Exception){
 
+                }
             }else{
                 try {
                     xx2=binding.x2.text.toString().toInt()
@@ -207,7 +217,11 @@ class MainActivity : AppCompatActivity(),BleViewAdapter.ItemClickListener {
 
         binding.x3.doAfterTextChanged {
             if(buttonSelect.value!!){
+                try {
+                    xx3=Integer.valueOf(binding.x3.text.toString(),16)
+                }catch (e: java.lang.Exception){
 
+                }
             }else{
                 try {
                     xx3=binding.x3.text.toString().toInt()
@@ -218,6 +232,24 @@ class MainActivity : AppCompatActivity(),BleViewAdapter.ItemClickListener {
         }
 
         binding.x4.doAfterTextChanged {
+            if(buttonSelect.value!!){
+                try {
+                    xx4=Integer.valueOf(binding.x4.text.toString(),16)
+                }catch (e: java.lang.Exception){
+
+                }
+            }else{
+                try {
+                    xx4=binding.x4.text.toString().toInt()
+                }catch (e: java.lang.Exception){
+
+                }
+            }
+        }
+
+
+
+        binding.writeCount.doAfterTextChanged {
             if(buttonSelect.value!!){
 
             }else{
