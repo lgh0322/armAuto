@@ -15,6 +15,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -34,6 +35,14 @@ class MainActivity : AppCompatActivity(),BleViewAdapter.ItemClickListener {
     lateinit var x2: EditText
     lateinit var x3: EditText
     lateinit var x4: EditText
+
+
+    var xx1=0;
+    var xx2=0;
+    var xx3=0
+    var xx4=0
+
+
     private val bleList: MutableList<BleBean> = ArrayList()
     var nrfConnect = false
 
@@ -110,16 +119,94 @@ class MainActivity : AppCompatActivity(),BleViewAdapter.ItemClickListener {
         }
     }
 
+
+    val buttonSelect= MutableLiveData<Boolean>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setClick()
 
-        binding.x1.filters = arrayOf(InputFilterMinMax("0", "255"))
-        binding.x2.filters = arrayOf(InputFilterMinMax("0", "255"))
-        binding.x3.filters = arrayOf(InputFilterMinMax("0", "255"))
-        binding.x4.filters = arrayOf(InputFilterMinMax("0", "255"))
+        buttonSelect.value=false
+
+//        binding.x1.filters = arrayOf(InputFilterMinMax("0", "255"))
+//        binding.x2.filters = arrayOf(InputFilterMinMax("0", "255"))
+//        binding.x3.filters = arrayOf(InputFilterMinMax("0", "255"))
+//        binding.x4.filters = arrayOf(InputFilterMinMax("0", "255"))
+
+
+        buttonSelect.observe(this,{
+            if(it){
+                binding.x1.setText( String.format("%02X",xx1))
+                binding.x2.setText( String.format("%02X",xx2))
+                binding.x3.setText( String.format("%02X",xx3))
+                binding.x4.setText( String.format("%02X",xx4))
+
+            }else{
+                binding.x1.setText(xx1.toString())
+                binding.x2.setText(xx2.toString())
+                binding.x3.setText(xx3.toString())
+                binding.x4.setText(xx4.toString())
+
+            }
+        })
+
+
+
+        binding.x1.doAfterTextChanged {
+            if(buttonSelect.value!!){
+
+            }else{
+                try {
+                    xx1=binding.x1.text.toString().toInt()
+                }catch (e:java.lang.Exception){
+
+                }
+
+            }
+        }
+
+        binding.x2.doAfterTextChanged {
+            if(buttonSelect.value!!){
+
+            }else{
+                try {
+                    xx2=binding.x2.text.toString().toInt()
+                }catch (e:java.lang.Exception){
+
+                }
+            }
+        }
+
+        binding.x3.doAfterTextChanged {
+            if(buttonSelect.value!!){
+
+            }else{
+                try {
+                    xx3=binding.x3.text.toString().toInt()
+                }catch (e:java.lang.Exception){
+
+                }
+            }
+        }
+
+        binding.x4.doAfterTextChanged {
+            if(buttonSelect.value!!){
+
+            }else{
+                try {
+                    xx4=binding.x4.text.toString().toInt()
+                }catch (e:java.lang.Exception){
+
+                }
+            }
+        }
+
+
+
+
+
 
         bleViewAdapter = BleViewAdapter(this)
         binding.bleTable.adapter=bleViewAdapter
@@ -191,7 +278,7 @@ class MainActivity : AppCompatActivity(),BleViewAdapter.ItemClickListener {
     private fun setClick() {
         binding.ecgButton.apply {
             setOnClickListener {
-
+                buttonSelect.postValue(false)
                 setTextColor(ContextCompat.getColor(this@MainActivity, R.color.white))
                 background =
                         ContextCompat.getDrawable(this@MainActivity, R.drawable.top_button_bg)
@@ -208,7 +295,7 @@ class MainActivity : AppCompatActivity(),BleViewAdapter.ItemClickListener {
         binding.prButton.apply {
             setOnClickListener {
 
-
+                buttonSelect.postValue(true)
 
                 setTextColor(ContextCompat.getColor(this@MainActivity, R.color.white))
                 background =
