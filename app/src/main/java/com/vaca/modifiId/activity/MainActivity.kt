@@ -250,15 +250,15 @@ class MainActivity : AppCompatActivity(), BleViewAdapter.ItemClickListener {
 
 
         binding.writeCount.doAfterTextChanged {
-            if (buttonSelect.value!!) {
 
-            } else {
                 try {
-                    xx4 = binding.x4.text.toString().toInt()
+                    val wu = binding.writeCount.text.toString().toInt()
+                    xx5=wu.and(0xff)
+                    xx6=wu.and(0xff00).shr(8)
                 } catch (e: java.lang.Exception) {
 
                 }
-            }
+
         }
 
 
