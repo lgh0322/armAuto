@@ -8,8 +8,11 @@ import android.bluetooth.le.BluetoothLeScanner
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.Gravity
 import android.view.View
 import android.widget.EditText
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
@@ -148,14 +151,28 @@ class MainActivity : AppCompatActivity(),BleViewAdapter.ItemClickListener {
     }
 
     fun writeId(view: View) {
-       bleWorker.sendCmd(byteArrayOf(
-               binding.x1.text.toString().toInt().toByte(),
-               binding.x2.text.toString().toInt().toByte(),
-               binding.x3.text.toString().toInt().toByte(),
-               binding.x4.text.toString().toInt().toByte(),
-               0.toByte(),
-               0.toByte(),
-       ))
+        try {
+            bleWorker.sendCmd(byteArrayOf(
+                    binding.x1.text.toString().toInt().toByte(),
+                    binding.x2.text.toString().toInt().toByte(),
+                    binding.x3.text.toString().toInt().toByte(),
+                    binding.x4.text.toString().toInt().toByte(),
+                    0.toByte(),
+                    0.toByte(),
+            ))
+        }catch (e:Exception){
+            Toast(this).apply {
+                val layout =layoutInflater.inflate(R.layout.toast_layout, null)
+                layout.findViewById<TextView>(R.id.dada).apply {
+                    text = "请输入正确参数"
+                }
+                setGravity(Gravity.CENTER, 0, 0)
+                duration = Toast.LENGTH_SHORT
+                setView(layout)
+                show()
+            }
+        }
+
     }
 
     override fun onScanItemClick(bluetoothDevice: BluetoothDevice?) {
