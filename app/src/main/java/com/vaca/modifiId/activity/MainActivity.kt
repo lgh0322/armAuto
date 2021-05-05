@@ -11,8 +11,11 @@ import android.os.Bundle
 import android.view.View
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import com.vaca.modifiId.R
 
 import com.vaca.modifiId.adapter.BleViewAdapter
 import com.vaca.modifiId.bean.BleBean
@@ -31,8 +34,8 @@ class MainActivity : AppCompatActivity(),BleViewAdapter.ItemClickListener {
     private val bleList: MutableList<BleBean> = ArrayList()
     var nrfConnect = false
 
-    val dataScope = CoroutineScope(Dispatchers.IO)
-    val BLE_DATA_WORKER: BleDataWorker = BleDataWorker()
+    private val dataScope = CoroutineScope(Dispatchers.IO)
+    private val bleWorker: BleDataWorker = BleDataWorker()
     val scan = BleScanManager()
     val mainVisible=MutableLiveData<Boolean>()
 
@@ -41,12 +44,12 @@ class MainActivity : AppCompatActivity(),BleViewAdapter.ItemClickListener {
 
     fun updateDevice(byteArray: ByteArray) {
         dataScope.launch {
-            BLE_DATA_WORKER.updateDevice(byteArray)
+            bleWorker.updateDevice(byteArray)
         }
 
     }
 
-    fun setScan(bluetoothLeScanner: BluetoothLeScanner) {
+    private fun setScan(bluetoothLeScanner: BluetoothLeScanner) {
         scan.setScan(bluetoothLeScanner)
     }
 
@@ -108,6 +111,7 @@ class MainActivity : AppCompatActivity(),BleViewAdapter.ItemClickListener {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setClick()
 
         binding.x1.filters = arrayOf(InputFilterMinMax("0", "255"))
         binding.x2.filters = arrayOf(InputFilterMinMax("0", "255"))
@@ -144,14 +148,68 @@ class MainActivity : AppCompatActivity(),BleViewAdapter.ItemClickListener {
     }
 
     fun writeId(view: View) {
-       BLE_DATA_WORKER.sendCmd(byteArrayOf(x1.text.toString().toInt().toByte(), x2.text.toString().toInt().toByte(), x3.text.toString().toInt().toByte(), x4.text.toString().toInt().toByte()))
+       bleWorker.sendCmd(byteArrayOf(
+               binding.x1.text.toString().toInt().toByte(),
+               binding.x2.text.toString().toInt().toByte(),
+               binding.x3.text.toString().toInt().toByte(),
+               binding.x4.text.toString().toInt().toByte(),
+               0.toByte(),
+               0.toByte(),
+       ))
     }
 
     override fun onScanItemClick(bluetoothDevice: BluetoothDevice?) {
 
-        BLE_DATA_WORKER.initWorker(application, bluetoothDevice)
+        bleWorker.initWorker(application, bluetoothDevice)
         mainVisible.postValue(true)
     }
+
+
+
+
+
+
+
+
+    private fun setClick() {
+        binding.ecgButton.apply {
+            setOnClickListener {
+
+                setTextColor(ContextCompat.getColor(this@MainActivity, R.color.white))
+                background =
+                        ContextCompat.getDrawable(this@MainActivity, R.drawable.top_button_bg)
+                binding.prButton.setTextColor(
+                        ContextCompat.getColor(
+                                this@MainActivity,
+                                R.color.login_hint_black
+                        )
+                )
+                binding.prButton.background = null
+            }
+        }
+
+        binding.prButton.apply {
+            setOnClickListener {
+
+
+
+                setTextColor(ContextCompat.getColor(this@MainActivity, R.color.white))
+                background =
+                        ContextCompat.getDrawable(this@MainActivity, R.drawable.top_button_bg)
+                binding.ecgButton.setTextColor(
+                        ContextCompat.getColor(
+                                this@MainActivity,
+                                R.color.login_hint_black
+                        )
+                )
+                binding.ecgButton.background = null
+            }
+        }
+
+
+    }
+
+
 
 
     override fun onBackPressed() {
