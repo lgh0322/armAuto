@@ -10,6 +10,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
@@ -17,16 +18,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.MutableLiveData
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.vaca.modifiId.R
-
 import com.vaca.modifiId.adapter.BleViewAdapter
 import com.vaca.modifiId.bean.BleBean
 import com.vaca.modifiId.ble.BleDataWorker
 import com.vaca.modifiId.ble.BleScanManager
 import com.vaca.modifiId.databinding.ActivityMainBinding
-import com.vaca.modifiId.utils.InputFilterMinMax
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 
@@ -122,11 +120,39 @@ class MainActivity : AppCompatActivity(),BleViewAdapter.ItemClickListener {
 
     val buttonSelect= MutableLiveData<Boolean>()
 
+
+    /**
+     * 显示键盘
+     *
+     * @param et 输入焦点
+     */
+    fun showInput(et: EditText) {
+        et.requestFocus()
+        val imm: InputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(et, InputMethodManager.SHOW_IMPLICIT)
+    }
+
+    /**
+     * 隐藏键盘
+     */
+    protected fun hideInput() {
+        val imm: InputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        val v = window.peekDecorView()
+        if (null != v) {
+            imm.hideSoftInputFromWindow(v.windowToken, 0)
+        }
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setClick()
+
+        binding.main.setOnClickListener{
+            hideInput()
+        }
 
         buttonSelect.value=false
 
@@ -136,14 +162,14 @@ class MainActivity : AppCompatActivity(),BleViewAdapter.ItemClickListener {
 //        binding.x4.filters = arrayOf(InputFilterMinMax("0", "255"))
 
 
-        buttonSelect.observe(this,{
-            if(it){
-                binding.x1.setText( String.format("%02X",xx1))
-                binding.x2.setText( String.format("%02X",xx2))
-                binding.x3.setText( String.format("%02X",xx3))
-                binding.x4.setText( String.format("%02X",xx4))
+        buttonSelect.observe(this, {
+            if (it) {
+                binding.x1.setText(String.format("%02X", xx1))
+                binding.x2.setText(String.format("%02X", xx2))
+                binding.x3.setText(String.format("%02X", xx3))
+                binding.x4.setText(String.format("%02X", xx4))
 
-            }else{
+            } else {
                 binding.x1.setText(xx1.toString())
                 binding.x2.setText(xx2.toString())
                 binding.x3.setText(xx3.toString())
@@ -160,7 +186,7 @@ class MainActivity : AppCompatActivity(),BleViewAdapter.ItemClickListener {
             }else{
                 try {
                     xx1=binding.x1.text.toString().toInt()
-                }catch (e:java.lang.Exception){
+                }catch (e: java.lang.Exception){
 
                 }
 
@@ -173,7 +199,7 @@ class MainActivity : AppCompatActivity(),BleViewAdapter.ItemClickListener {
             }else{
                 try {
                     xx2=binding.x2.text.toString().toInt()
-                }catch (e:java.lang.Exception){
+                }catch (e: java.lang.Exception){
 
                 }
             }
@@ -185,7 +211,7 @@ class MainActivity : AppCompatActivity(),BleViewAdapter.ItemClickListener {
             }else{
                 try {
                     xx3=binding.x3.text.toString().toInt()
-                }catch (e:java.lang.Exception){
+                }catch (e: java.lang.Exception){
 
                 }
             }
@@ -197,7 +223,7 @@ class MainActivity : AppCompatActivity(),BleViewAdapter.ItemClickListener {
             }else{
                 try {
                     xx4=binding.x4.text.toString().toInt()
-                }catch (e:java.lang.Exception){
+                }catch (e: java.lang.Exception){
 
                 }
             }
@@ -214,13 +240,13 @@ class MainActivity : AppCompatActivity(),BleViewAdapter.ItemClickListener {
         bleViewAdapter.setClickListener(this)
 
 
-        mainVisible.observe(this,{
-            if(it){
-                binding.group.visibility=View.VISIBLE
-                binding.bleTable.visibility=View.GONE
-            }else{
-                binding.group.visibility=View.INVISIBLE
-                binding.bleTable.visibility=View.VISIBLE
+        mainVisible.observe(this, {
+            if (it) {
+                binding.group.visibility = View.VISIBLE
+                binding.bleTable.visibility = View.GONE
+            } else {
+                binding.group.visibility = View.INVISIBLE
+                binding.bleTable.visibility = View.VISIBLE
             }
 
         })
@@ -247,7 +273,7 @@ class MainActivity : AppCompatActivity(),BleViewAdapter.ItemClickListener {
                     0.toByte(),
                     0.toByte(),
             ))
-        }catch (e:Exception){
+        }catch (e: Exception){
             Toast(this).apply {
                 val layout =layoutInflater.inflate(R.layout.toast_layout, null)
                 layout.findViewById<TextView>(R.id.dada).apply {
