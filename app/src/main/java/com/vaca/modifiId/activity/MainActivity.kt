@@ -28,19 +28,19 @@ import com.vaca.modifiId.databinding.ActivityMainBinding
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 
-class MainActivity : AppCompatActivity(),BleViewAdapter.ItemClickListener {
+class MainActivity : AppCompatActivity(), BleViewAdapter.ItemClickListener {
     lateinit var x1: EditText
     lateinit var x2: EditText
     lateinit var x3: EditText
     lateinit var x4: EditText
 
 
-    var xx1=0;
-    var xx2=0;
-    var xx3=0
-    var xx4=0
-    var xx5=0
-    var xx6=0
+    var xx1 = 0;
+    var xx2 = 0;
+    var xx3 = 0
+    var xx4 = 0
+    var xx5 = 0
+    var xx6 = 0
 
 
     private val bleList: MutableList<BleBean> = ArrayList()
@@ -49,10 +49,10 @@ class MainActivity : AppCompatActivity(),BleViewAdapter.ItemClickListener {
     private val dataScope = CoroutineScope(Dispatchers.IO)
     private val bleWorker: BleDataWorker = BleDataWorker()
     val scan = BleScanManager()
-    val mainVisible=MutableLiveData<Boolean>()
+    val mainVisible = MutableLiveData<Boolean>()
 
 
-    lateinit var bleViewAdapter : BleViewAdapter
+    lateinit var bleViewAdapter: BleViewAdapter
 
     fun updateDevice(byteArray: ByteArray) {
         dataScope.launch {
@@ -112,7 +112,7 @@ class MainActivity : AppCompatActivity(),BleViewAdapter.ItemClickListener {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_ENABLE_BT) {
-           dataScope.launch {
+            dataScope.launch {
                 bleChannel.send(true)
             }
 
@@ -120,7 +120,7 @@ class MainActivity : AppCompatActivity(),BleViewAdapter.ItemClickListener {
     }
 
 
-    val buttonSelect= MutableLiveData<Boolean>()
+    val buttonSelect = MutableLiveData<Boolean>()
 
 
     /**
@@ -152,11 +152,11 @@ class MainActivity : AppCompatActivity(),BleViewAdapter.ItemClickListener {
         setContentView(binding.root)
         setClick()
 
-        binding.main.setOnClickListener{
+        binding.main.setOnClickListener {
             hideInput()
         }
 
-        buttonSelect.value=false
+        buttonSelect.value = false
 
 //        binding.x1.filters = arrayOf(InputFilterMinMax("0", "255"))
 //        binding.x2.filters = arrayOf(InputFilterMinMax("0", "255"))
@@ -183,16 +183,16 @@ class MainActivity : AppCompatActivity(),BleViewAdapter.ItemClickListener {
 
 
         binding.x1.doAfterTextChanged {
-            if(buttonSelect.value!!){
+            if (buttonSelect.value!!) {
                 try {
-                    xx1=Integer.valueOf(binding.x1.text.toString(),16)
-                }catch (e: java.lang.Exception){
+                    xx1 = Integer.valueOf(binding.x1.text.toString(), 16)
+                } catch (e: java.lang.Exception) {
 
                 }
-            }else{
+            } else {
                 try {
-                    xx1=binding.x1.text.toString().toInt()
-                }catch (e: java.lang.Exception){
+                    xx1 = binding.x1.text.toString().toInt()
+                } catch (e: java.lang.Exception) {
 
                 }
 
@@ -200,48 +200,48 @@ class MainActivity : AppCompatActivity(),BleViewAdapter.ItemClickListener {
         }
 
         binding.x2.doAfterTextChanged {
-            if(buttonSelect.value!!){
+            if (buttonSelect.value!!) {
                 try {
-                    xx2=Integer.valueOf(binding.x2.text.toString(),16)
-                }catch (e: java.lang.Exception){
+                    xx2 = Integer.valueOf(binding.x2.text.toString(), 16)
+                } catch (e: java.lang.Exception) {
 
                 }
-            }else{
+            } else {
                 try {
-                    xx2=binding.x2.text.toString().toInt()
-                }catch (e: java.lang.Exception){
+                    xx2 = binding.x2.text.toString().toInt()
+                } catch (e: java.lang.Exception) {
 
                 }
             }
         }
 
         binding.x3.doAfterTextChanged {
-            if(buttonSelect.value!!){
+            if (buttonSelect.value!!) {
                 try {
-                    xx3=Integer.valueOf(binding.x3.text.toString(),16)
-                }catch (e: java.lang.Exception){
+                    xx3 = Integer.valueOf(binding.x3.text.toString(), 16)
+                } catch (e: java.lang.Exception) {
 
                 }
-            }else{
+            } else {
                 try {
-                    xx3=binding.x3.text.toString().toInt()
-                }catch (e: java.lang.Exception){
+                    xx3 = binding.x3.text.toString().toInt()
+                } catch (e: java.lang.Exception) {
 
                 }
             }
         }
 
         binding.x4.doAfterTextChanged {
-            if(buttonSelect.value!!){
+            if (buttonSelect.value!!) {
                 try {
-                    xx4=Integer.valueOf(binding.x4.text.toString(),16)
-                }catch (e: java.lang.Exception){
+                    xx4 = Integer.valueOf(binding.x4.text.toString(), 16)
+                } catch (e: java.lang.Exception) {
 
                 }
-            }else{
+            } else {
                 try {
-                    xx4=binding.x4.text.toString().toInt()
-                }catch (e: java.lang.Exception){
+                    xx4 = binding.x4.text.toString().toInt()
+                } catch (e: java.lang.Exception) {
 
                 }
             }
@@ -250,12 +250,12 @@ class MainActivity : AppCompatActivity(),BleViewAdapter.ItemClickListener {
 
 
         binding.writeCount.doAfterTextChanged {
-            if(buttonSelect.value!!){
+            if (buttonSelect.value!!) {
 
-            }else{
+            } else {
                 try {
-                    xx4=binding.x4.text.toString().toInt()
-                }catch (e: java.lang.Exception){
+                    xx4 = binding.x4.text.toString().toInt()
+                } catch (e: java.lang.Exception) {
 
                 }
             }
@@ -267,8 +267,8 @@ class MainActivity : AppCompatActivity(),BleViewAdapter.ItemClickListener {
 
 
         bleViewAdapter = BleViewAdapter(this)
-        binding.bleTable.adapter=bleViewAdapter
-        binding.bleTable.layoutManager= GridLayoutManager(this, 2);
+        binding.bleTable.adapter = bleViewAdapter
+        binding.bleTable.layoutManager = GridLayoutManager(this, 2);
         bleViewAdapter.setClickListener(this)
 
 
@@ -285,9 +285,9 @@ class MainActivity : AppCompatActivity(),BleViewAdapter.ItemClickListener {
 
         Thread {
             runBlocking {
-               setScan(getLeScan())
+                setScan(getLeScan())
             }
-          startServer(application)
+            startServer(application)
 
 
         }.start()
@@ -298,16 +298,16 @@ class MainActivity : AppCompatActivity(),BleViewAdapter.ItemClickListener {
     fun writeId(view: View) {
         try {
             bleWorker.sendCmd(byteArrayOf(
-                    binding.x1.text.toString().toInt().toByte(),
-                    binding.x2.text.toString().toInt().toByte(),
-                    binding.x3.text.toString().toInt().toByte(),
-                    binding.x4.text.toString().toInt().toByte(),
-                    0.toByte(),
-                    0.toByte(),
+                    xx1.toByte(),
+                    xx2.toByte(),
+                    xx3.toByte(),
+                    xx4.toByte(),
+                    xx5.toByte(),
+                    xx6.toByte(),
             ))
-        }catch (e: Exception){
+        } catch (e: Exception) {
             Toast(this).apply {
-                val layout =layoutInflater.inflate(R.layout.toast_layout, null)
+                val layout = layoutInflater.inflate(R.layout.toast_layout, null)
                 layout.findViewById<TextView>(R.id.dada).apply {
                     text = "请输入正确参数"
                 }
@@ -325,12 +325,6 @@ class MainActivity : AppCompatActivity(),BleViewAdapter.ItemClickListener {
         bleWorker.initWorker(application, bluetoothDevice)
         mainVisible.postValue(true)
     }
-
-
-
-
-
-
 
 
     private fun setClick() {
@@ -370,8 +364,6 @@ class MainActivity : AppCompatActivity(),BleViewAdapter.ItemClickListener {
 
 
     }
-
-
 
 
     override fun onBackPressed() {
