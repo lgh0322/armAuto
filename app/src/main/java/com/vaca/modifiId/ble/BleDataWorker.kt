@@ -14,7 +14,7 @@ import no.nordicsemi.android.ble.data.Data
 import no.nordicsemi.android.ble.observer.ConnectionObserver
 
 
-class BleDataWorker {
+class BleDataWorker(val comeData: BleDataManager.OnNotifyListener) {
     private var pool: ByteArray? = null
 
     private val dataScope = CoroutineScope(Dispatchers.IO)
@@ -218,12 +218,7 @@ class BleDataWorker {
         }
     }
 
-    private val comeData = object : BleDataManager.OnNotifyListener {
-        override fun onNotify(device: BluetoothDevice?, data: Data?) {
 
-        }
-
-    }
 
 
     fun initWorker(context: Context, bluetoothDevice: BluetoothDevice?) {

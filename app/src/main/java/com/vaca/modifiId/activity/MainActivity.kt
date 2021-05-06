@@ -22,11 +22,13 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.vaca.modifiId.R
 import com.vaca.modifiId.adapter.BleViewAdapter
 import com.vaca.modifiId.bean.BleBean
+import com.vaca.modifiId.ble.BleDataManager
 import com.vaca.modifiId.ble.BleDataWorker
 import com.vaca.modifiId.ble.BleScanManager
 import com.vaca.modifiId.databinding.ActivityMainBinding
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
+import no.nordicsemi.android.ble.data.Data
 
 class MainActivity : AppCompatActivity(), BleViewAdapter.ItemClickListener {
     lateinit var x1: EditText
@@ -47,7 +49,7 @@ class MainActivity : AppCompatActivity(), BleViewAdapter.ItemClickListener {
     var nrfConnect = false
 
     private val dataScope = CoroutineScope(Dispatchers.IO)
-    private val bleWorker: BleDataWorker = BleDataWorker()
+   lateinit var  bleWorker: BleDataWorker
     val scan = BleScanManager()
     val mainVisible = MutableLiveData<Boolean>()
 
@@ -122,6 +124,8 @@ class MainActivity : AppCompatActivity(), BleViewAdapter.ItemClickListener {
 
     val buttonSelect = MutableLiveData<Boolean>()
 
+    val deviceInfo = MutableLiveData<ByteArray>()
+
 
     /**
      * 显示键盘
@@ -145,6 +149,8 @@ class MainActivity : AppCompatActivity(), BleViewAdapter.ItemClickListener {
         }
     }
 
+    var mySendByteArray:ByteArray?=null
+    val hintToast=MutableLiveData<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -152,11 +158,76 @@ class MainActivity : AppCompatActivity(), BleViewAdapter.ItemClickListener {
         setContentView(binding.root)
         setClick()
 
+        hintToast.observe(this,{
+            Toast(this).apply {
+                val layout = layoutInflater.inflate(R.layout.toast_layout, null)
+                layout.findViewById<TextView>(R.id.dada).apply {
+                    text = it
+                }
+                setGravity(Gravity.CENTER, 0, 0)
+                duration = Toast.LENGTH_SHORT
+                setView(layout)
+                show()
+            }
+        })
+
+
+
+        bleWorker= BleDataWorker(object: BleDataManager.OnNotifyListener{
+            override fun onNotify(device: BluetoothDevice?, data: Data?) {
+                data?.value?.run {
+                    if(this.size==6){
+                        var same=true
+                        for(k in 0 until 6){
+                            System.out.println("sdf  "+this[k].toUByte().toInt().toString())
+                            if(this[k]!=mySendByteArray!![k]){
+                                same=false
+                                break;
+                            }
+                        }
+                        if(same){
+                            hintToast.postValue("设置成功")
+                        }
+                    }else if(this.size==7){
+                        if(this[6].toUByte().toInt()==243){
+                            deviceInfo.postValue(this)
+                        }
+                    }
+                }
+            }
+
+        })
+
         binding.main.setOnClickListener {
             hideInput()
         }
 
         buttonSelect.value = false
+
+        deviceInfo.observe(this,{
+
+
+            if(buttonSelect!!.value ==false){
+                binding.x1.setText(it[0].toUByte().toInt().toString())
+                binding.x2.setText(it[1].toUByte().toInt().toString())
+                binding.x3.setText(it[2].toUByte().toInt().toString())
+                binding.x4.setText(it[3].toUByte().toInt().toString())
+
+            }else{
+                binding.x1.setText(String.format("%02X",it[0].toUByte().toInt()))
+                binding.x2.setText(String.format("%02X",it[1].toUByte().toInt()))
+                binding.x3.setText(String.format("%02X",it[2].toUByte().toInt()))
+                binding.x4.setText(String.format("%02X",it[3].toUByte().toInt()))
+
+            }
+
+            val num=it[4].toUByte().toInt()
+            val num2=it[5].toUByte().toInt()
+            val num3=num+num2*256
+            binding.writeCount.setText(num3.toString())
+
+            bleWorker.sendCmd(byteArrayOf(0x0.toByte()))
+        })
 
 //        binding.x1.filters = arrayOf(InputFilterMinMax("0", "255"))
 //        binding.x2.filters = arrayOf(InputFilterMinMax("0", "255"))
@@ -297,25 +368,17 @@ class MainActivity : AppCompatActivity(), BleViewAdapter.ItemClickListener {
 
     fun writeId(view: View) {
         try {
-            bleWorker.sendCmd(byteArrayOf(
+            mySendByteArray=byteArrayOf(
                     xx1.toByte(),
                     xx2.toByte(),
                     xx3.toByte(),
                     xx4.toByte(),
                     xx5.toByte(),
                     xx6.toByte(),
-            ))
+            )
+            bleWorker.sendCmd(mySendByteArray!!)
         } catch (e: Exception) {
-            Toast(this).apply {
-                val layout = layoutInflater.inflate(R.layout.toast_layout, null)
-                layout.findViewById<TextView>(R.id.dada).apply {
-                    text = "请输入正确参数"
-                }
-                setGravity(Gravity.CENTER, 0, 0)
-                duration = Toast.LENGTH_SHORT
-                setView(layout)
-                show()
-            }
+          hintToast.postValue("请输入正确的参数")
         }
 
     }

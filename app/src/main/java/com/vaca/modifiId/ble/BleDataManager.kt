@@ -116,9 +116,11 @@ class BleDataManager(context: Context, val read: DataReceivedCallback) : BleMana
                                         "Requested MTU not supported: $status"
                                 )
                             })
+                    .add(enableNotifications(notify_char))
                     .done { log(Log.INFO, "Target initialized") }
                     .enqueue()
-
+            setNotificationCallback(notify_char)
+                    .with { device: BluetoothDevice?, data: Data? -> listener?.onNotify(device, data) }
 //            readCharacteristic(ota_char).with(read).enqueue()
 
         }
@@ -127,6 +129,8 @@ class BleDataManager(context: Context, val read: DataReceivedCallback) : BleMana
         override fun onDeviceDisconnected() {
             // Device disconnected. Release your references here.
             ota_char = null
+            write_char = null
+            notify_char = null
         }
     }
 
