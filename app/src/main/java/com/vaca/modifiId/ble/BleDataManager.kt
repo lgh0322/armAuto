@@ -10,8 +10,8 @@ import no.nordicsemi.android.ble.callback.DataReceivedCallback
 import no.nordicsemi.android.ble.data.Data
 import java.util.*
 
-class BleDataManager(context: Context, val read: DataReceivedCallback) : BleManager(context) {
-    private var ota_char: BluetoothGattCharacteristic? = null
+class BleDataManager(context: Context) : BleManager(context) {
+
     private var write_char: BluetoothGattCharacteristic? = null
     private var notify_char: BluetoothGattCharacteristic? = null
     private var listener: OnNotifyListener? = null
@@ -29,12 +29,6 @@ class BleDataManager(context: Context, val read: DataReceivedCallback) : BleMana
     }
 
 
-    fun sendCmdOTA(bytes: ByteArray?) {
-        writeCharacteristic(ota_char, bytes)
-                .split()
-                .done { }
-                .enqueue()
-    }
 
 
     fun sendCmd(bytes: ByteArray?) {
@@ -45,9 +39,7 @@ class BleDataManager(context: Context, val read: DataReceivedCallback) : BleMana
     }
 
 
-    fun read() {
-        readCharacteristic(ota_char).with(read).enqueue()
-    }
+
 
 
     override fun log(priority: Int, message: String) {}
@@ -59,14 +51,6 @@ class BleDataManager(context: Context, val read: DataReceivedCallback) : BleMana
     private inner class MyManagerGattCallback : BleManagerGattCallback() {
 
         public override fun isRequiredServiceSupported(gatt: BluetoothGatt): Boolean {
-            val otaService = gatt.getService(ota_service_uuid)
-            if (otaService != null) {
-                ota_char = otaService.getCharacteristic(ota_uuid)
-            }
-
-            if (ota_char != null) {
-                ota_char!!.writeType = BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
-            }
 
 
             val service = gatt.getService(service_uuid)
@@ -88,7 +72,7 @@ class BleDataManager(context: Context, val read: DataReceivedCallback) : BleMana
 
 
             // Return true if all required services have been found
-            return ota_char != null
+            return true
         }
 
         // If you have any optional services, allocate them here. Return true only if
@@ -128,27 +112,23 @@ class BleDataManager(context: Context, val read: DataReceivedCallback) : BleMana
 
         override fun onDeviceDisconnected() {
             // Device disconnected. Release your references here.
-            ota_char = null
+
             write_char = null
             notify_char = null
         }
     }
 
     companion object {
-        val ota_service_uuid: UUID =
-                UUID.fromString("0000ff00-0000-1000-8000-00805f9b34fb")
 
-        val ota_uuid: UUID =
-                UUID.fromString("0000ff01-0000-1000-8000-00805f9b34fb")
 
         val service_uuid: UUID =
-                UUID.fromString("00000001-0000-1000-8000-00805f9b34fb")
+                UUID.fromString("0000ffe0-0000-1000-8000-00805f9b34fb")
 
         val notify_uuid: UUID =
-                UUID.fromString("00000003-0000-1000-8000-00805f9b34fb")
+                UUID.fromString("0000ffe1-0000-1000-8000-00805f9b34fb")
 
         val write_uuid: UUID =
-                UUID.fromString("00000002-0000-1000-8000-00805f9b34fb")
+                UUID.fromString("0000ffe1-0000-1000-8000-00805f9b34fb")
 
 
     }

@@ -8,6 +8,7 @@ import android.bluetooth.le.BluetoothLeScanner
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -56,12 +57,7 @@ class MainActivity : AppCompatActivity(), BleViewAdapter.ItemClickListener {
 
     lateinit var bleViewAdapter: BleViewAdapter
 
-    fun updateDevice(byteArray: ByteArray) {
-        dataScope.launch {
-            bleWorker.updateDevice(byteArray)
-        }
 
-    }
 
     private fun setScan(bluetoothLeScanner: BluetoothLeScanner) {
         scan.setScan(bluetoothLeScanner)
@@ -193,6 +189,9 @@ class MainActivity : AppCompatActivity(), BleViewAdapter.ItemClickListener {
                             deviceInfo.postValue(this)
                         }
                     }
+
+                    Log.e("sdf",String(this))
+
                 }
             }
 

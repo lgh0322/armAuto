@@ -76,71 +76,22 @@ class BleDataWorker(val comeData: BleDataManager.OnNotifyListener) {
         return true
     }
 
-    private val sendCallBack = object : DataSentCallback {
-        override fun onDataSent(device: BluetoothDevice, data: Data) {
-            dataScope.launch {
-                data.value?.let {
-                    sendChannel.send(it)
-                }
-            }
-        }
-    }
 
 
-    private val readCallBack = object : DataReceivedCallback {
-        override fun onDataReceived(device: BluetoothDevice, data: Data) {
-            dataScope.launch {
-
-                data.value?.run {
-                    for (k in this) {
-
-                    }
-                    if (equalPkg(this, startPackage)) {
-                        fileChannel.send(BleCallBack.START)
-                    } else if (equalPkg(this, bodyPackage)) {
-                        fileChannel.send(BleCallBack.BODY)
-                    } else if (equalPkg(this, endPackage)) {
-                        fileChannel.send(BleCallBack.END)
-                    } else {
-                        fileChannel.send(BleCallBack.OTHER)
-                    }
-                }
-            }
-
-        }
-
-    }
 
 
-    fun sendCmdOTA(bs: ByteArray) {
-        bleDataManager?.sendCmdOTA(bs)
-    }
+
 
     fun sendCmd(bs: ByteArray) {
         bleDataManager?.sendCmd(bs)
     }
 
 
-    fun readBleCallBack() {
-        bleDataManager?.read()
-
-    }
 
     val MAX_TRANS_COUNT = 15
     val CMD_FW_WRITE: Byte = 0x17.toByte()
 
 
-    private suspend fun erase() {
-        mutex.withLock {
-            sendCmdOTA(byteArrayOf(0x16.toByte(), 0x00.toByte()))
-            delay(200)
-            readBleCallBack()
-            while (fileChannel.receive() != BleCallBack.START) {
-                readBleCallBack()
-                delay(200)
-            }
-        }
-    }
 
 
     private suspend fun writeId(byteArray: ByteArray) {
@@ -150,79 +101,17 @@ class BleDataWorker(val comeData: BleDataManager.OnNotifyListener) {
     }
 
 
-    fun OTA_Write_Flash_section_start(check: Int, size: Int, Address: Int): ByteArray {
-        val WriteData = ByteArray(10)
-        WriteData[0] = 0x14
-        WriteData[1] = 0x13
-        WriteData[2] = (Address and 0x000000FF).toByte()
-        WriteData[3] = (Address and 0x0000FF00 shr 8).toByte()
-        WriteData[4] = (Address and 0x00FF0000 shr 16).toByte()
-        WriteData[5] = (Address and -0x1000000 shr 24).toByte()
-        WriteData[6] = (size and 0x000000FF).toByte()
-        WriteData[7] = (size and 0x0000FF00 shr 8).toByte()
-        WriteData[8] = (check and 0x000000FF).toByte()
-        WriteData[9] = (check and 0x0000FF00 shr 8).toByte()
-        for (k in WriteData) {
-            Log.e("掠夺式开发", k.toUByte().toInt().toString())
-        }
-        return WriteData
-    }
-
-    suspend fun updateDevice(byteArray: ByteArray) {
-        erase()
-
-        val x = byteArray.copyOfRange(0, 5120)
-        var s = 0
-        for (k in x) {
-            s += k.toUByte().toInt()
-        }
-
-        sendCmdOTA(OTA_Write_Flash_section_start(s, 5120, 0))
-
-        delay(1000)
-
-        sendCmdOTA(x)
 
 
-    }
 
 
-    private suspend fun writePkg(ProgramData: ByteArray, address: Int) {
-        mutex.withLock {
-            val writeData = ByteArray(20)
-            writeData[0] = CMD_FW_WRITE
-            writeData[1] = 0x13.toByte()
-            writeData[2] = (address and 0x000000FF).toByte()
-            writeData[3] = (address and 0x0000FF00 shr 8).toByte()
-            writeData[4] = ProgramData.size.toByte()
-            var i = 0
-            while (i < ProgramData.size) {
-                writeData[i + 5] = ProgramData[i]
-                i++
-            }
 
-
-            withTimeoutOrNull(1) {
-                sendChannel.receive()
-            }
-
-            sendCmdOTA(writeData)
-
-            val re = sendChannel.receive()
-
-            if (equalPkg(writeData, re)) {
-
-            }
-
-
-        }
-    }
 
 
 
 
     fun initWorker(context: Context, bluetoothDevice: BluetoothDevice?) {
-        bleDataManager = BleDataManager(context, readCallBack)
+        bleDataManager = BleDataManager(context)
         bleDataManager?.setNotifyListener(comeData)
         bleDataManager?.setConnectionObserver(connectState)
         bluetoothDevice?.let {
