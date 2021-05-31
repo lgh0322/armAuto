@@ -10,174 +10,123 @@
     android:focusable="true"
     tools:context=".activity.MainActivity">
 
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/change"
-        android:layout_width="308dp"
-        android:layout_height="70dp"
-        android:layout_marginTop="23dp"
-        app:cardCornerRadius="35dp"
-        app:cardElevation="5dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
+    <LinearLayout
+        android:id="@+id/mainView"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
         <LinearLayout
+            android:layout_marginTop="80dp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
+            android:layout_height="wrap_content"
+            android:gravity="start|center_vertical"
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/ecgButton"
-                android:layout_width="144dp"
-                android:layout_height="50dp"
-                android:background="@drawable/top_button_bg"
-                android:clickable="true"
-                android:focusable="true"
+                android:textSize="22sp"
+                android:textColor="@color/rr"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="十进制"
-                android:textColor="@color/white"
-                android:textSize="26sp" />
+                android:text="夹子" />
+
+            <SeekBar
+                android:progress="1000"
+                android:id="@+id/seekBar1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="2000" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_marginTop="80dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start|center_vertical"
+            android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/prButton"
-                android:layout_width="144dp"
-                android:layout_height="50dp"
-                android:clickable="true"
-                android:focusable="true"
+                android:textSize="22sp"
+                android:textColor="@color/rr"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="十六进制"
-                android:textColor="#4E596F"
-                android:textSize="26sp" />
+                android:text="前臂" />
 
+            <SeekBar
+                android:progress="1000"
+                android:id="@+id/seekBar2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="2000" />
         </LinearLayout>
-    </androidx.cardview.widget.CardView>
-
-
-    <LinearLayout
-        android:id="@+id/number"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="150dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:gravity="center"
-        android:orientation="horizontal"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_marginTop="80dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:layout_weight="0.5"
-            android:text="写入内容"
-            android:textColor="@color/purple_200"
-            android:textSize="26sp" />
+            android:gravity="start|center_vertical"
+            android:orientation="horizontal">
 
-        <EditText
-            android:id="@+id/x1"
-            android:layout_width="0dp"
+            <TextView
+                android:textSize="22sp"
+                android:textColor="@color/rr"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="中臂" />
+
+            <SeekBar
+                android:progress="1000"
+                android:id="@+id/seekBar3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="2000" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_marginTop="80dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/ai_bg"
-            android:gravity="center"
-            android:inputType="textEmailAddress"
-            android:maxLength="3"
-            android:padding="10dp"
-            android:textColor="@color/white" />
+            android:gravity="start|center_vertical"
+            android:orientation="horizontal">
 
-        <EditText
-            android:id="@+id/x2"
-            android:layout_width="0dp"
+            <TextView
+                android:textSize="22sp"
+                android:textColor="@color/rr"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="后臂" />
+
+            <SeekBar
+                android:progress="1000"
+                android:id="@+id/seekBar4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="2000" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_marginTop="80dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/ai_bg"
-            android:gravity="center"
-            android:inputType="textEmailAddress"
-            android:maxLength="3"
-            android:padding="10dp"
-            android:textColor="@color/white" />
+            android:gravity="start|center_vertical"
+            android:orientation="horizontal">
 
-        <EditText
-            android:id="@+id/x3"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/ai_bg"
-            android:gravity="center"
-            android:inputType="textEmailAddress"
-            android:maxLength="3"
-            android:padding="10dp"
-            android:textColor="@color/white" />
+            <TextView
+                android:textSize="22sp"
+                android:textColor="@color/rr"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="转盘" />
 
-        <EditText
-            android:id="@+id/x4"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="30dp"
-            android:layout_weight="1"
-            android:background="@drawable/ai_bg"
-            android:gravity="center"
-            android:inputType="textEmailAddress"
-            android:maxLength="3"
-            android:padding="10dp"
-            android:textColor="@color/white" />
-
+            <SeekBar
+                android:progress="1000"
+                android:id="@+id/seekBar5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="2000" />
+        </LinearLayout>
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/go"
-        android:layout_width="200dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="500dp"
-        android:background="@drawable/ai_bg"
-        android:clickable="true"
-        android:focusable="true"
-        android:foreground="?android:attr/selectableItemBackground"
-        android:gravity="center"
-        android:onClick="writeId"
-        android:text="设置"
-        android:textColor="@color/white"
-        android:textSize="50sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
-    <TextView
-        android:id="@+id/titleWrite"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="300dp"
-        android:text="写入次数"
-        android:textColor="@color/purple_200"
-        android:textSize="26sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <EditText
-        android:id="@+id/writeCount"
-        android:layout_width="130dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="60dp"
-        android:layout_marginTop="300dp"
-        android:background="@drawable/ai_bg"
-        android:gravity="center"
-        android:inputType="number"
-        android:maxLength="5"
-        android:textSize="26sp"
-        app:layout_constraintStart_toEndOf="@+id/titleWrite"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/group"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:constraint_referenced_ids="number,go,titleWrite,writeCount,change" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/ble_table"
         android:layout_width="match_parent"

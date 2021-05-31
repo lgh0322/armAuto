@@ -9,4 +9,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="login_black">#242A38</color>
     <color name="login_hint_black">#4E596F</color>
+    <color name="rr">#ff15b9bf</color>
+
 </resources>

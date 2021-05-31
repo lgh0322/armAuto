@@ -30,27 +30,18 @@ import com.vaca.modifiId.databinding.ActivityMainBinding
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import no.nordicsemi.android.ble.data.Data
+import java.util.*
+import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity(), BleViewAdapter.ItemClickListener {
-    lateinit var x1: EditText
-    lateinit var x2: EditText
-    lateinit var x3: EditText
-    lateinit var x4: EditText
 
-
-    var xx1 = 0;
-    var xx2 = 0;
-    var xx3 = 0
-    var xx4 = 0
-    var xx5 = 0
-    var xx6 = 0
 
 
     private val bleList: MutableList<BleBean> = ArrayList()
     var nrfConnect = false
 
     private val dataScope = CoroutineScope(Dispatchers.IO)
-   lateinit var  bleWorker: BleDataWorker
+   var  bleWorker: BleDataWorker?=null
     val scan = BleScanManager()
     val mainVisible = MutableLiveData<Boolean>()
 
@@ -123,27 +114,6 @@ class MainActivity : AppCompatActivity(), BleViewAdapter.ItemClickListener {
     val deviceInfo = MutableLiveData<ByteArray>()
 
 
-    /**
-     * 显示键盘
-     *
-     * @param et 输入焦点
-     */
-    fun showInput(et: EditText) {
-        et.requestFocus()
-        val imm: InputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.showSoftInput(et, InputMethodManager.SHOW_IMPLICIT)
-    }
-
-    /**
-     * 隐藏键盘
-     */
-    protected fun hideInput() {
-        val imm: InputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        val v = window.peekDecorView()
-        if (null != v) {
-            imm.hideSoftInputFromWindow(v.windowToken, 0)
-        }
-    }
 
     var mySendByteArray:ByteArray?=null
     val hintToast=MutableLiveData<String>()
@@ -152,20 +122,8 @@ class MainActivity : AppCompatActivity(), BleViewAdapter.ItemClickListener {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setClick()
 
-        hintToast.observe(this,{
-            Toast(this).apply {
-                val layout = layoutInflater.inflate(R.layout.toast_layout, null)
-                layout.findViewById<TextView>(R.id.dada).apply {
-                    text = it
-                }
-                setGravity(Gravity.CENTER, 0, 0)
-                duration = Toast.LENGTH_SHORT
-                setView(layout)
-                show()
-            }
-        })
+        Timer().schedule(xx, Date(),50)
 
 
 
@@ -197,139 +155,11 @@ class MainActivity : AppCompatActivity(), BleViewAdapter.ItemClickListener {
 
         })
 
-        binding.main.setOnClickListener {
-            hideInput()
-        }
+
 
         buttonSelect.value = false
 
-        deviceInfo.observe(this,{
 
-
-            if(buttonSelect!!.value ==false){
-                binding.x1.setText(it[0].toUByte().toInt().toString())
-                binding.x2.setText(it[1].toUByte().toInt().toString())
-                binding.x3.setText(it[2].toUByte().toInt().toString())
-                binding.x4.setText(it[3].toUByte().toInt().toString())
-
-            }else{
-                binding.x1.setText(String.format("%02X",it[0].toUByte().toInt()))
-                binding.x2.setText(String.format("%02X",it[1].toUByte().toInt()))
-                binding.x3.setText(String.format("%02X",it[2].toUByte().toInt()))
-                binding.x4.setText(String.format("%02X",it[3].toUByte().toInt()))
-
-            }
-
-            val num=it[4].toUByte().toInt()
-            val num2=it[5].toUByte().toInt()
-            val num3=num+num2*256
-            binding.writeCount.setText(num3.toString())
-
-            bleWorker.sendCmd(byteArrayOf(0x0.toByte()))
-        })
-
-//        binding.x1.filters = arrayOf(InputFilterMinMax("0", "255"))
-//        binding.x2.filters = arrayOf(InputFilterMinMax("0", "255"))
-//        binding.x3.filters = arrayOf(InputFilterMinMax("0", "255"))
-//        binding.x4.filters = arrayOf(InputFilterMinMax("0", "255"))
-
-
-        buttonSelect.observe(this, {
-            if (it) {
-                binding.x1.setText(String.format("%02X", xx1))
-                binding.x2.setText(String.format("%02X", xx2))
-                binding.x3.setText(String.format("%02X", xx3))
-                binding.x4.setText(String.format("%02X", xx4))
-
-            } else {
-                binding.x1.setText(xx1.toString())
-                binding.x2.setText(xx2.toString())
-                binding.x3.setText(xx3.toString())
-                binding.x4.setText(xx4.toString())
-
-            }
-        })
-
-
-
-        binding.x1.doAfterTextChanged {
-            if (buttonSelect.value!!) {
-                try {
-                    xx1 = Integer.valueOf(binding.x1.text.toString(), 16)
-                } catch (e: java.lang.Exception) {
-
-                }
-            } else {
-                try {
-                    xx1 = binding.x1.text.toString().toInt()
-                } catch (e: java.lang.Exception) {
-
-                }
-
-            }
-        }
-
-        binding.x2.doAfterTextChanged {
-            if (buttonSelect.value!!) {
-                try {
-                    xx2 = Integer.valueOf(binding.x2.text.toString(), 16)
-                } catch (e: java.lang.Exception) {
-
-                }
-            } else {
-                try {
-                    xx2 = binding.x2.text.toString().toInt()
-                } catch (e: java.lang.Exception) {
-
-                }
-            }
-        }
-
-        binding.x3.doAfterTextChanged {
-            if (buttonSelect.value!!) {
-                try {
-                    xx3 = Integer.valueOf(binding.x3.text.toString(), 16)
-                } catch (e: java.lang.Exception) {
-
-                }
-            } else {
-                try {
-                    xx3 = binding.x3.text.toString().toInt()
-                } catch (e: java.lang.Exception) {
-
-                }
-            }
-        }
-
-        binding.x4.doAfterTextChanged {
-            if (buttonSelect.value!!) {
-                try {
-                    xx4 = Integer.valueOf(binding.x4.text.toString(), 16)
-                } catch (e: java.lang.Exception) {
-
-                }
-            } else {
-                try {
-                    xx4 = binding.x4.text.toString().toInt()
-                } catch (e: java.lang.Exception) {
-
-                }
-            }
-        }
-
-
-
-        binding.writeCount.doAfterTextChanged {
-
-                try {
-                    val wu = binding.writeCount.text.toString().toInt()
-                    xx5=wu.and(0xff)
-                    xx6=wu.and(0xff00).shr(8)
-                } catch (e: java.lang.Exception) {
-
-                }
-
-        }
 
 
 
@@ -342,16 +172,7 @@ class MainActivity : AppCompatActivity(), BleViewAdapter.ItemClickListener {
         bleViewAdapter.setClickListener(this)
 
 
-        mainVisible.observe(this, {
-            if (it) {
-                binding.group.visibility = View.VISIBLE
-                binding.bleTable.visibility = View.GONE
-            } else {
-                binding.group.visibility = View.INVISIBLE
-                binding.bleTable.visibility = View.VISIBLE
-            }
 
-        })
 
         Thread {
             runBlocking {
@@ -365,73 +186,56 @@ class MainActivity : AppCompatActivity(), BleViewAdapter.ItemClickListener {
 
     }
 
-    fun writeId(view: View) {
-        try {
-            mySendByteArray=byteArrayOf(
-                    xx1.toByte(),
-                    xx2.toByte(),
-                    xx3.toByte(),
-                    xx4.toByte(),
-                    xx5.toByte(),
-                    xx6.toByte(),
-            )
-            bleWorker.sendCmd(mySendByteArray!!)
-        } catch (e: Exception) {
-          hintToast.postValue("请输入正确的参数")
-        }
 
-    }
 
     override fun onScanItemClick(bluetoothDevice: BluetoothDevice?) {
 
-        bleWorker.initWorker(application, bluetoothDevice)
-        mainVisible.postValue(true)
+        bleWorker?.initWorker(application, bluetoothDevice)
+        binding.bleTable.visibility=View.GONE
+        binding.mainView.visibility=View.VISIBLE
     }
 
 
-    private fun setClick() {
-        binding.ecgButton.apply {
-            setOnClickListener {
-                buttonSelect.postValue(false)
-                setTextColor(ContextCompat.getColor(this@MainActivity, R.color.white))
-                background =
-                        ContextCompat.getDrawable(this@MainActivity, R.drawable.top_button_bg)
-                binding.prButton.setTextColor(
-                        ContextCompat.getColor(
-                                this@MainActivity,
-                                R.color.login_hint_black
-                        )
-                )
-                binding.prButton.background = null
+
+
+    val xx=RtDataTask()
+
+    inner class RtDataTask() : TimerTask() {
+        override fun run() {
+            val bb=ByteArray(11){
+                0x32.toByte()
             }
+
+            var cc=binding.seekBar1.progress;
+            Log.e("fuck",cc.toString())
+            bb[1]=(cc%256).toByte()
+            bb[2]=(cc/256).toByte()
+
+            cc=binding.seekBar2.progress;
+            bb[3]=(cc%256).toByte()
+            bb[4]=(cc/256).toByte()
+
+
+            cc=binding.seekBar3.progress;
+            bb[5]=(cc%256).toByte()
+            bb[6]=(cc/256).toByte()
+
+
+            cc=binding.seekBar4.progress;
+            bb[7]=(cc%256).toByte()
+            bb[8]=(cc/256).toByte()
+
+
+            cc=binding.seekBar5.progress;
+            bb[9]=(cc%256).toByte()
+            bb[10]=(cc/256).toByte()
+
+            bleWorker?.sendCmd(bb)
         }
-
-        binding.prButton.apply {
-            setOnClickListener {
-
-                buttonSelect.postValue(true)
-
-                setTextColor(ContextCompat.getColor(this@MainActivity, R.color.white))
-                background =
-                        ContextCompat.getDrawable(this@MainActivity, R.drawable.top_button_bg)
-                binding.ecgButton.setTextColor(
-                        ContextCompat.getColor(
-                                this@MainActivity,
-                                R.color.login_hint_black
-                        )
-                )
-                binding.ecgButton.background = null
-            }
-        }
-
-
     }
 
 
-    override fun onBackPressed() {
-        moveTaskToBack(false)
 
-    }
 }
 
 
